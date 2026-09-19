@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: lfsrc-harness-config
+data:
+  LFSRC_ROOT: /opt/lfsrc
+  LFSRC_RUNS_ROOT: /opt/lfsrc/runs
+  LFSRC_SCOPE_PATH: /opt/lfsrc/config/scope.yaml
+  scope.yaml: |
+    name: cluster-authorized-scope
+    targets: [local-node]
+    time_windows: []
+    rate_limit: {requests: 20, per_seconds: 60}
+    prohibited_actions: [destructive, persistence]
+    privileges: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lfsrc-harness
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: lfsrc-harness}
+  template:
+    metadata:
+      labels: {app: lfsrc-harness}
+    spec:
+      containers:
+        - name: api
+          image: lfsrc-harness:0.1.0
+          ports: [{containerPort: 8619}]
+          envFrom:
+            - configMapRef: {name: lfsrc-harness-config}
+            - secretRef: {name: lfsrc-harness-secrets}
+          volumeMounts:
+            - {name: config, mountPath: /opt/lfsrc/config}
+            - {name: runs, mountPath: /opt/lfsrc/runs}
+          resources:
+            requests: {cpu: 250m, memory: 256Mi}
+            limits: {cpu: "2", memory: 2Gi}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /health, port: 8619}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+      volumes:
+        - name: config
+          configMap:
+            name: lfsrc-harness-config
+            items: [{key: scope.yaml, path: scope.yaml}]
+        - name: runs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: lfsrc-harness-secrets
+type: Opaque
+stringData:
+  LFSRC_API_TOKENS_JSON: '{"replace-admin-token":"admin"}'
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lfsrc-harness
+spec:
+  selector: {app: lfsrc-harness}
+  ports: [{name: http, port: 8619, targetPort: 8619}]

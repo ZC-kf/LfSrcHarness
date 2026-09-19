@@ -1,0 +1,15 @@
+.git/
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+**/__pycache__/
+**/.git/
+**/node_modules/
+build/
+package/
+runs/
+tests/reports/
+web/dist/
+deploy/.env
+agent_bundle/

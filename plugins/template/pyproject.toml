@@ -1,0 +1,11 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lfsrc-example-plugin"
+version = "1.0.0"
+dependencies = ["lfsrc-harness"]
+
+[project.entry-points."lfsrc_harness.plugins"]
+example = "plugin:plugin"

@@ -1,0 +1,118 @@
+name: lfsrc-harness
+
+x-runtime: &runtime
+  image: lfsrc-harness:0.1.0
+  build:
+    context: ..
+    dockerfile: deploy/Dockerfile
+  env_file: ${LFSRC_ENV_FILE:-.env}
+  environment:
+    LFSRC_ROOT: /opt/lfsrc
+    LFSRC_RUNS_ROOT: /opt/lfsrc/runs
+    LFSRC_SCOPE_PATH: /opt/lfsrc/config/scope.yaml
+    LFSRC_REDIS_URL: redis://redis:6379/0
+    LFSRC_RESULT_BACKEND: redis://redis:6379/1
+    LFSRC_DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+  volumes:
+    - ../runs:/opt/lfsrc/runs
+    - ./config:/opt/lfsrc/config:ro
+  restart: unless-stopped
+
+services:
+  api:
+    <<: *runtime
+    command: ["uvicorn", "lfsrc_harness.server:app", "--host", "0.0.0.0", "--port", "8619"]
+    ports: ["127.0.0.1:8619:8619"]
+    depends_on:
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+
+  grpc:
+    <<: *runtime
+    command: ["lfsrc-grpc"]
+    ports: ["127.0.0.1:8621:8621"]
+    environment:
+      LFSRC_ROOT: /opt/lfsrc
+      LFSRC_RUNS_ROOT: /opt/lfsrc/runs
+      LFSRC_SCOPE_PATH: /opt/lfsrc/config/scope.yaml
+      LFSRC_REDIS_URL: redis://redis:6379/0
+      LFSRC_RESULT_BACKEND: redis://redis:6379/1
+      LFSRC_GRPC_HOST: 0.0.0.0
+      LFSRC_GRPC_PORT: 8621
+      LFSRC_GRPC_TOKEN: ${LFSRC_GRPC_TOKEN:?set a gRPC bearer token}
+      LFSRC_AGENT_COMMAND_JSON: ${LFSRC_AGENT_COMMAND_JSON:-}
+    depends_on:
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; socket.create_connection(('127.0.0.1', 8621), timeout=2).close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  worker:
+    <<: *runtime
+    command: ["celery", "-A", "lfsrc_harness.worker:app", "worker", "--loglevel=INFO", "--concurrency=4"]
+    depends_on:
+      redis: { condition: service_healthy }
+      postgres: { condition: service_healthy }
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A lfsrc_harness.worker:app inspect ping --timeout=2 -d celery@$$HOSTNAME | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  worker-privileged:
+    <<: *runtime
+    profiles: ["privileged"]
+    user: root
+    privileged: true
+    network_mode: host
+    environment:
+      LFSRC_ROOT: /opt/lfsrc
+      LFSRC_RUNS_ROOT: /opt/lfsrc/runs
+      LFSRC_SCOPE_PATH: /opt/lfsrc/config/scope.yaml
+      LFSRC_REDIS_URL: ${LFSRC_HOST_REDIS_URL:-redis://127.0.0.1:6379/0}
+      LFSRC_RESULT_BACKEND: ${LFSRC_HOST_REDIS_BACKEND:-redis://127.0.0.1:6379/1}
+    volumes:
+      - ../runs:/opt/lfsrc/runs
+      - ./config:/opt/lfsrc/config:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: ["celery", "-A", "lfsrc_harness.worker:app", "worker", "--loglevel=INFO", "--concurrency=2", "--hostname=privileged@%h"]
+    healthcheck:
+      test: ["CMD-SHELL", "celery -A lfsrc_harness.worker:app inspect ping --timeout=2 -d privileged@$$HOSTNAME | grep -q pong"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  redis:
+    image: redis:7.4-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports: ["127.0.0.1:6379:6379"]
+    volumes: ["redis-data:/data"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes: ["postgres-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+  postgres-data:

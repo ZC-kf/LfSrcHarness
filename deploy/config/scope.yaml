@@ -1,0 +1,16 @@
+name: local-authorized-lab
+tenant_id: default
+targets:
+  - local-node
+  - 127.0.0.1
+time_windows: []
+rate_limit:
+  requests: 20
+  per_seconds: 60
+prohibited_actions:
+  - destructive
+  - persistence
+privileges:
+  allow_privileged_container: false
+  allow_host_network: false
+  allow_docker_socket: false

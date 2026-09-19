@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ report.title }}</title>
+  <style>
+    body { max-width: 980px; margin: 2rem auto; padding: 0 1.5rem; font: 16px/1.55 system-ui, sans-serif; color: #172033; }
+    h1, h2, h3 { color: #0b3d5c; }
+    code { background: #eef3f7; padding: .15rem .35rem; border-radius: .25rem; }
+    pre { overflow: auto; background: #0e1726; color: #e9f1f7; padding: 1rem; border-radius: .5rem; }
+  </style>
+</head>
+<body>{{ body | safe }}</body>
+</html>

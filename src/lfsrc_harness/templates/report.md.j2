@@ -1,0 +1,52 @@
+# {{ report.title }}
+
+**Run:** {{ report.run_id }}
+**Generated:** {{ report.generated_at.isoformat() }}
+
+## Summary
+
+{{ report.summary }}
+
+## Scope
+
+{% for item in report.scope %}- {{ item }}
+{% endfor %}
+
+## Methodology
+
+{% for item in report.methodology %}{{ loop.index }}. {{ item }}
+{% endfor %}
+
+## Findings
+
+{% for finding in report.findings %}### {{ finding.id }} — {{ finding.title }}
+
+- Severity: `{{ finding.severity.value }}`
+{% if finding.target %}- Target: `{{ finding.target }}`
+{% endif %}
+{{ finding.description }}
+
+#### Evidence
+
+{% for item in finding.evidence %}- {{ item }}
+{% else %}- No evidence references recorded.
+{% endfor %}
+
+#### Reproduction
+
+{% for item in finding.reproduction %}{{ loop.index }}. {{ item }}
+{% else %}No reproduction steps recorded.
+{% endfor %}
+
+#### Remediation
+
+{{ finding.remediation }}
+
+{% else %}No findings.
+{% endfor %}
+
+## Appendix
+
+```json
+{{ report.appendix | tojson(indent=2) }}
+```

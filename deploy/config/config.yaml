@@ -1,0 +1,18 @@
+server:
+  host: 0.0.0.0
+  port: 8619
+storage:
+  local_database: /opt/lfsrc/runs/state.sqlite3
+  runs: /opt/lfsrc/runs
+queue:
+  concurrency: 4
+  per_target: 1
+  per_tool: 2
+  per_node: 4
+interactive_control:
+  enabled: false
+  screen: false
+  desktop: false
+  browser: false
+privileged_profile:
+  enabled: false

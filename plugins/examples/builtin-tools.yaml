@@ -1,0 +1,34 @@
+plugins:
+  - name: nmap
+    transport: subprocess
+    capabilities: [network_inventory]
+    target_types: [internal, web, api]
+  - name: nuclei
+    transport: subprocess
+    capabilities: [template_assessment]
+    target_types: [web, api, cloud]
+  - name: ffuf
+    transport: subprocess
+    capabilities: [content_discovery]
+    target_types: [web, api]
+  - name: sqlmap
+    transport: subprocess
+    capabilities: [database_validation]
+    target_types: [web, api]
+  - name: burp
+    transport: http
+    capabilities: [proxy_assessment]
+    target_types: [web, api, mobile]
+  - name: metasploit
+    transport: http
+    capabilities: [controlled_validation]
+    target_types: [internal, web, ad]
+  - name: custom-script
+    transport: subprocess
+    capabilities: [custom]
+    target_types: [web, api, internal, cloud, ad, mobile]
+
+target_adapters: [web, api, internal, cloud, ad, mobile]
+
+# This catalog declares capabilities only. Executable paths and arguments are
+# supplied by deployment configuration and still pass scope and policy checks.

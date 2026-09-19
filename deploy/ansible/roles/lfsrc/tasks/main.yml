@@ -1,0 +1,50 @@
+---
+- name: Require Kali, Ubuntu, or Debian family
+  ansible.builtin.assert:
+    that: ansible_os_family == "Debian"
+    fail_msg: "LfSrcHarness role supports Kali, Ubuntu and Debian."
+
+- name: Install runtime packages
+  ansible.builtin.apt:
+    name: [python3, python3-venv, python3-pip, docker.io, redis-server]
+    state: present
+    update_cache: true
+
+- name: Create service account
+  ansible.builtin.user:
+    name: lfsrc
+    system: true
+    home: /opt/lfsrc
+    create_home: true
+
+- name: Copy project source
+  ansible.builtin.copy:
+    src: "{{ lfsrc_source | default(playbook_dir + '/../../..') }}/"
+    dest: /opt/lfsrc/
+    owner: lfsrc
+    group: lfsrc
+    mode: preserve
+
+- name: Create Python environment
+  ansible.builtin.command:
+    cmd: python3 -m venv /opt/lfsrc/.venv
+    creates: /opt/lfsrc/.venv/bin/python
+
+- name: Install application
+  ansible.builtin.pip:
+    name: /opt/lfsrc
+    virtualenv: /opt/lfsrc/.venv
+
+- name: Install systemd unit
+  ansible.builtin.copy:
+    src: /opt/lfsrc/deploy/systemd/lfsrc-harness.service
+    dest: /etc/systemd/system/lfsrc-harness.service
+    remote_src: true
+    mode: "0644"
+
+- name: Enable API service
+  ansible.builtin.systemd_service:
+    name: lfsrc-harness
+    enabled: true
+    state: restarted
+    daemon_reload: true

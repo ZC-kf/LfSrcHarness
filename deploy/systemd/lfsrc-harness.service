@@ -1,0 +1,22 @@
+[Unit]
+Description=LfSrcHarness API and operator console
+After=network-online.target redis-server.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=lfsrc
+Group=lfsrc
+WorkingDirectory=/opt/lfsrc
+EnvironmentFile=-/etc/lfsrc-harness.env
+ExecStart=/opt/lfsrc/.venv/bin/uvicorn lfsrc_harness.server:app --host 0.0.0.0 --port 8619
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/lfsrc/runs /opt/lfsrc/package
+
+[Install]
+WantedBy=multi-user.target

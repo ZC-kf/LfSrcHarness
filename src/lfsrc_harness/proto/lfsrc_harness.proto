@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package lfsrc;
+
+// The v1 server uses UTF-8 JSON bytes so Agents in any language can adopt the
+// contract without importing Python models. The JSON shape is documented by
+// AgentRequest and AgentEvent in lfsrc_harness.agent.
+message JsonEnvelope {
+  bytes json = 1;
+}
+
+service Agent {
+  rpc Run(JsonEnvelope) returns (JsonEnvelope);
+}

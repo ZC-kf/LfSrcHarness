@@ -1,0 +1,107 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lfsrc-harness"
+version = "0.1.0"
+description = "Authorization-first automation harness for the bundled Hacker Agent"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = { text = "PolyForm Noncommercial License 1.0.0" }
+authors = [{ name = "LfSrcHarness" }]
+dependencies = [
+  "aiosqlite>=0.20,<1",
+  "asyncpg>=0.30,<1",
+  "celery>=5.4,<6",
+  "docker>=7.1,<8",
+  "fastapi>=0.115,<1",
+  "grpcio>=1.70,<2",
+  "grpcio-tools>=1.70,<2",
+  "httpx>=0.28,<1",
+  "jinja2>=3.1,<4",
+  "keyring>=25.6,<26",
+  "markdown>=3.7,<4",
+  "opentelemetry-api>=1.30,<2",
+  "opentelemetry-sdk>=1.30,<2",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "pyyaml>=6.0,<7",
+  "redis>=5.2,<8",
+  "reportlab>=4.3,<5",
+  "sqlalchemy>=2.0,<3",
+  "typer>=0.15,<1",
+  "uvicorn>=0.34,<1",
+]
+
+[project.optional-dependencies]
+desktop = ["pywebview>=5,<7"]
+automation = [
+  "mss>=10,<11",
+  "playwright>=1.50,<2",
+  "pyautogui>=0.9.54,<1",
+]
+
+[project.scripts]
+lfsrc = "lfsrc_harness.cli:app"
+lfsrc-grpc = "lfsrc_harness.grpc_server:main"
+lfsrc-desktop = "lfsrc_harness.desktop:main"
+
+[project.entry-points."lfsrc_harness.plugins"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lfsrc_harness"]
+
+[dependency-groups]
+dev = [
+  "freezegun>=1.5,<2",
+  "mypy>=1.14,<2",
+  "pyinstaller>=6.16,<7",
+  "pytest>=8.3,<10",
+  "pytest-asyncio>=0.25,<2",
+  "pytest-cov>=6,<8",
+  "ruff>=0.9,<1",
+  "types-pyyaml>=6.0,<7",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+asyncio_mode = "auto"
+
+[tool.coverage.run]
+branch = true
+source = ["lfsrc_harness"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+fail_under = 80
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/lfsrc_harness/proto/*_pb2.py" = ["E501", "UP009"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["lfsrc_harness"]
+
+[[tool.mypy.overrides]]
+module = [
+  "celery",
+  "docker",
+  "docker.*",
+  "grpc",
+  "markdown",
+  "pyautogui",
+  "reportlab.*",
+  "webview",
+]
+ignore_missing_imports = true

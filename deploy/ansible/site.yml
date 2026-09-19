@@ -1,0 +1,6 @@
+---
+- name: Install LfSrcHarness on Debian-family hosts
+  hosts: lfsrc
+  become: true
+  roles:
+    - lfsrc
