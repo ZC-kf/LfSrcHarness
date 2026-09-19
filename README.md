@@ -20,6 +20,7 @@ Windows 用户从本仓库的 [Releases](https://github.com/ZC-kf/LfSrcHarness/r
 安装程序按需从微软官方下载并验证 .NET Framework / WebView2 组件；Python 和界面
 已包含在桌面安装包中。Linux/Kali 用户从仓库获取源码，按
 [`docs/INSTALL.md`](docs/INSTALL.md) 执行命令行安装。
+桌面操作请看中文的 [`docs/DESKTOP_GUIDE.md`](docs/DESKTOP_GUIDE.md)。
 
 原创 Harness 代码按 [PolyForm Noncommercial 1.0.0](LICENSE.md) 提供非商业使用许可；
 这属于“源码可见”，不是 OSI 定义的开源许可。请只在合法、明确授权的范围内使用。

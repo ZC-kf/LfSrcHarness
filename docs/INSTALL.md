@@ -1,5 +1,8 @@
 # 安装指南
 
+安装后如何在软件窗口配置模型、授权范围和连接测试，请看
+[`DESKTOP_GUIDE.md`](DESKTOP_GUIDE.md)。
+
 ## Windows 桌面版
 
 从 [GitHub Releases](https://github.com/ZC-kf/LfSrcHarness/releases) 下载

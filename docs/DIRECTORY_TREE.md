@@ -17,6 +17,7 @@ LfSrcHarness/
 |   |-- ASSUMPTIONS.md
 |   |-- DIRECTORY_TREE.md
 |   |-- INSTALL.md
+|   |-- DESKTOP_GUIDE.md
 |   |-- USAGE.md
 |   |-- CHANGELOG.md
 |   |-- TEST_REPORT.md

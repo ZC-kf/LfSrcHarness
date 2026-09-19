@@ -45,3 +45,15 @@ production desktop/browser automation were not exercised by the local smoke suit
   `--self-test`, desktop shortcut creation and uninstall all passed.
 - WSL Bash syntax and missing-Python preflight passed. Missing-.NET/WebView2 and full
   Kali/Ubuntu installation still require clean-environment validation.
+
+## Public repository and desktop guide update (2026-09-19)
+
+- Current local Python suite: 104 passed, 2 Linux-only tests skipped on Windows;
+  branch-aware coverage 81.19% (80% minimum).
+- GitHub Actions run [#3](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35433723873)
+  for commit `322434f` completed successfully, including container smoke after
+  changing the Compose runtime-data mount to a managed volume.
+- Chinese desktop guide link and content checks: 2 passed locally. The guide's
+  publication check is pending the documentation commit.
+- The existing preview Release was built before the Compose fix; a follow-up
+  Release is needed so the source archive includes the corrected deployment.
