@@ -11,6 +11,9 @@
   top of README; show Linux/Kali/Ubuntu/Debian clone-and-install commands;
   state accurately that the Linux distribution uses `install.sh`, not a DEB/RPM.
   Use concise, non-exaggerated About copy and point its website to the Release.
-- Acceptance: public About text and link visible; README first screen exposes
-  Windows EXE, source tarball, SHA-256 file, and Linux command block; public
-  links resolve to the current Release. Tests and final state pending.
+- Acceptance: GitHub About visibly shows “凛枫SRC Harness” and an accurate
+  Agent/Harness introduction, with its website pointed at Releases. The public
+  README first screen exposes direct `v0.1.1-preview.3` Windows EXE, source
+  archive, checksum file, and Linux command block. All three linked assets
+  appeared on the published Release page; the Windows asset was downloaded
+  from GitHub and matched the locally tested SHA-256.

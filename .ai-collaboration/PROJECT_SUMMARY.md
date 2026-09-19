@@ -69,7 +69,7 @@ servers, optional screen/desktop/browser backends on production nodes, and the p
 Compose profile require later environment-specific validation. Local tests use fixtures and
 loopback only. No production target was contacted during acceptance.
 
-## 0.1.1-preview.3 local repair
+## 0.1.1-preview.3 repair and public release
 
 WP-022 through WP-026 address repository discoverability and a Windows windowed-app
 startup failure. A red regression reproduced the reported Uvicorn formatter
@@ -82,4 +82,7 @@ embedded program/setup icon preserves the sword/triangle, central hooded
 masked figure, and green/blue binary field. Local pytest passed 108 tests
 with 2 Linux-only skips. Frozen self-test, normal startup, installer compile,
 install, repair and uninstall passed on Windows. Clean-OS .NET/WebView2
-bootstrapper behavior is unverified. Public GitHub CI/Release are pending.
+bootstrapper behavior is unverified. The independent public Release
+`v0.1.1-preview.3` contains the new Windows installer, source archive and
+SHA-256 file; a fresh GitHub download of the installer matched the locally
+tested hash. GitHub Actions runs #7 and #8 passed on main and the tag.

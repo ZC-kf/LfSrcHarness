@@ -35,5 +35,13 @@
   Disposable install, installed self-test/startup, deletion-and-repair of the
   UI entry point, and silent uninstall all passed. EXE/setup icon resources
   were extracted successfully.
-- Remaining: clean-Windows missing-.NET/WebView2 flow, public Release and
-  GitHub CI verification are pending.
+- Public verification: tagged `v0.1.1-preview.3` from commit `e0a4362`.
+  GitHub Actions runs #7 (main) and #8 (tag) completed successfully. The
+  public Release showed the installer digest
+  `090f92c1980abb35eb9b7c752b6d1ab7b02fdfa4430107eee71e71ceea8330d1`
+  and source archive digest
+  `e812ea9441df8001a9b858f5a7e896a6874cc0a0a296781014a2d0b1f9e01d49`;
+  a fresh public installer download matched the locally installed/tested file.
+- Remaining: clean-Windows missing-.NET/WebView2 branch, complete Linux/Kali
+  install, and a real visible desktop-window interaction still need separate
+  environment-specific verification. No production targets were contacted.

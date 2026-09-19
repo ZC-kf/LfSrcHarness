@@ -16,6 +16,11 @@ Date: 2026-09-19
   disposable installations were uninstalled successfully.
 - EXE and setup files both expose an embedded icon. Missing-.NET/WebView2
   download flows still require a clean Windows environment for live validation.
+- Public GitHub Actions [main run #7](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35452679582)
+  and [tag run #8](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35452693646)
+  completed successfully. The GitHub Release exposed all three expected
+  assets; a fresh public installer download was byte-identical by SHA-256
+  to the locally installed/tested installer.
 
 ## Automated results
 
