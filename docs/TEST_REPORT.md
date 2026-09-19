@@ -9,7 +9,8 @@ Date: 2026-09-19
   `--self-test` tests passed.
 - Local Python suite: 108 passed, 2 Linux-only tests skipped on Windows.
 - PyInstaller windowed EXE `--self-test` exited 0; normal launch remained alive
-  after five seconds. Inno Setup 7.1 compiled the 35.1 MB installer.
+  after five seconds, and its live loopback `/health` returned `ok`. Inno Setup
+  7.1 compiled the 35.1 MB installer.
 - Disposable-folder install exited 0, both program/UI payload files existed,
   installed EXE self-test exited 0, and normal installed app remained running.
   Deleting the disposable UI entry point and rerunning setup restored it; both

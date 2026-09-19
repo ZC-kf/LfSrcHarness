@@ -31,7 +31,8 @@
 - Verification: initial regression tests failed with the user's exact formatter
   exception and the self-test coverage gap, then passed after repair. Full local
   pytest: 108 passed, 2 Linux-only skipped. Frozen `--self-test` exited 0;
-  normal frozen app remained running. Inno Setup 7.1 compiled the installer.
+  normal frozen app remained running and served live `127.0.0.1` `/health=ok`.
+  Inno Setup 7.1 compiled the installer.
   Disposable install, installed self-test/startup, deletion-and-repair of the
   UI entry point, and silent uninstall all passed. EXE/setup icon resources
   were extracted successfully.
@@ -43,5 +44,5 @@
   `e812ea9441df8001a9b858f5a7e896a6874cc0a0a296781014a2d0b1f9e01d49`;
   a fresh public installer download matched the locally installed/tested file.
 - Remaining: clean-Windows missing-.NET/WebView2 branch, complete Linux/Kali
-  install, and a real visible desktop-window interaction still need separate
+  install, and a visible desktop-window interaction still need separate
   environment-specific verification. No production targets were contacted.

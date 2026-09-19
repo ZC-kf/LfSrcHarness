@@ -81,7 +81,8 @@ disposable installation. The user's original image remains unchanged; the
 embedded program/setup icon preserves the sword/triangle, central hooded
 masked figure, and green/blue binary field. Local pytest passed 108 tests
 with 2 Linux-only skips. Frozen self-test, normal startup, installer compile,
-install, repair and uninstall passed on Windows. Clean-OS .NET/WebView2
+install, repair and uninstall passed on Windows; a normal frozen run also
+served live loopback `/health=ok`. Clean-OS .NET/WebView2
 bootstrapper behavior is unverified. The independent public Release
 `v0.1.1-preview.3` contains the new Windows installer, source archive and
 SHA-256 file; a fresh GitHub download of the installer matched the locally
