@@ -24,3 +24,18 @@
   repository or Release as live until remote and download checks pass. Missing-runtime
   installation branches still require a clean Windows VM test; no live public targets
   were contacted by product tests.
+
+## Post-publication CI correction
+
+- Author: Codex; requirement mapping: REQ-014 / REQ-020; same locked scheme D.
+- Scope: `deploy/docker-compose.yml`, `tests/test_deploy.py`, deployment docs and
+  this record. No original Agent or third-party source changed.
+- Evidence: GitHub CI run #1 passed Python (Windows/Linux), web and deployment
+  jobs, but container smoke failed. API traceback ended at SQLite opening
+  `/opt/lfsrc/runs/state.sqlite3`. Compose bind-mounted the checkout's `runs/`
+  directory over the image directory already owned by the non-root service user.
+  The Linux checkout directory is not writable by that container user.
+- Fix: use a Compose-managed `runs-data` volume by default, preserving non-root
+  execution. A regression test checks all runtime services use the named volume.
+- Verification: focused deployment tests and Compose config pass locally;
+  post-fix GitHub container smoke and Release verification remain pending.

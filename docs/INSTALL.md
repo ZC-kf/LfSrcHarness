@@ -45,7 +45,8 @@ bash './deploy/install.sh' --root "$HOME/LfSrcHarness"
 Docker Compose、Ansible、Vagrant、systemd 和 Kubernetes 的部署文件在 `deploy/`。
 Docker 是服务端部署方式，不是 Windows 桌面版的前提。高权限容器仅限明确授权
 的隔离环境，默认不会启用。运行前请设置范围、访问令牌与急停操作人；勿将密钥
-提交至公开仓库。
+提交至公开仓库。Compose 默认把运行数据保存在 Docker 管理的 `runs-data` 卷中，
+不会直接写入源码目录的 `runs/`；删除该卷会永久删除其中数据，操作前请先备份。
 
 可选扫描工具不包含在源码或安装包中，也不会静默下载安装。请按
 [`THIRD_PARTY.md`](THIRD_PARTY.md) 中的官方来源自行安装并核对许可，然后在软件

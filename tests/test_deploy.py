@@ -66,6 +66,15 @@ def test_docker_build_context_excludes_runtime_data_and_private_config() -> None
     assert "agent_bundle/" in patterns
 
 
+def test_compose_run_data_uses_a_writable_named_volume_by_default() -> None:
+    compose = yaml.safe_load((ROOT / "deploy" / "docker-compose.yml").read_text(encoding="utf-8"))
+
+    assert "runs-data" in compose["volumes"]
+    for service in ("api", "grpc", "worker", "worker-privileged"):
+        assert "runs-data:/opt/lfsrc/runs" in compose["services"][service]["volumes"]
+        assert "../runs:/opt/lfsrc/runs" not in compose["services"][service]["volumes"]
+
+
 def test_container_uses_locked_python_dependencies() -> None:
     dockerfile = (ROOT / "deploy" / "Dockerfile").read_text(encoding="utf-8")
 
