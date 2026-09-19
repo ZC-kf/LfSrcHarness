@@ -1,5 +1,12 @@
 #define AppName "LfSrcHarness"
-#define AppVersion "0.1.1-preview"
+#define AppVersion "0.1.1-preview.3"
+
+#if !FileExists("..\..\package\LfSrcHarness-Desktop-Preview\LfSrcHarness.exe")
+  #error "Desktop bundle missing: build PyInstaller first."
+#endif
+#if !FileExists("..\..\package\LfSrcHarness-Desktop-Preview\_internal\web\dist\index.html")
+  #error "Desktop UI missing from bundle: build Vite before PyInstaller."
+#endif
 
 [Setup]
 AppId=LfSrcHarness.Desktop
@@ -13,10 +20,11 @@ DisableDirPage=no
 PrivilegesRequired=lowest
 ArchitecturesAllowed=x64compatible
 OutputDir=..\..\package
-OutputBaseFilename=LfSrcHarness-Windows-Setup-preview
+OutputBaseFilename=LfSrcHarness-Windows-Setup-v0.1.1-preview.3
 Compression=lzma2
 SolidCompression=yes
 WizardStyle=modern
+SetupIconFile=..\..\assets\LfSrcHarness-icon.ico
 UninstallDisplayIcon={app}\LfSrcHarness.exe
 
 [Languages]
@@ -174,4 +182,18 @@ begin
     Sleep(1000);
   end;
   Result := 'WebView2 尚未安装成功。请检查网络、完成微软安装向导后重新运行安装包。';
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+var
+  ExitCode: Integer;
+begin
+  if CurStep <> ssPostInstall then
+    Exit;
+  if not FileExists(ExpandConstant('{app}\LfSrcHarness.exe')) or
+    not FileExists(ExpandConstant('{app}\_internal\web\dist\index.html')) then
+    RaiseException('安装文件不完整。请重新运行安装包以修复。');
+  if not Exec(ExpandConstant('{app}\LfSrcHarness.exe'), '--self-test', '',
+    SW_HIDE, ewWaitUntilTerminated, ExitCode) or (ExitCode <> 0) then
+    RaiseException('程序安装后自检失败。请重新运行安装包修复；若仍失败，请在 GitHub 提交问题。');
 end;

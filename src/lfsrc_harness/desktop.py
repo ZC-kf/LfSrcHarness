@@ -90,6 +90,7 @@ def main() -> None:
     if "--self-test" in sys.argv:
         from fastapi.testclient import TestClient
 
+        _server_config(runtime.app, 0)
         with TestClient(runtime.app) as client:
             if client.get("/health").status_code != 200:
                 raise RuntimeError("desktop API health check failed")
@@ -100,9 +101,7 @@ def main() -> None:
     listener.bind(("127.0.0.1", 0))
     listener.listen(128)
     port = listener.getsockname()[1]
-    server = uvicorn.Server(
-        uvicorn.Config(runtime.app, host="127.0.0.1", port=port, access_log=False)
-    )
+    server = uvicorn.Server(_server_config(runtime.app, port))
     worker = Thread(target=server.run, kwargs={"sockets": [listener]}, daemon=True)
     worker.start()
     try:
@@ -117,3 +116,11 @@ def main() -> None:
         server.should_exit = True
         worker.join(timeout=5)
         listener.close()
+
+
+def _server_config(app: FastAPI, port: int) -> uvicorn.Config:
+    # PyInstaller's windowed entry has no stdout/stderr; Uvicorn's default
+    # colour formatter calls sys.stdout.isatty() during Config construction.
+    return uvicorn.Config(
+        app, host="127.0.0.1", port=port, access_log=False, log_config=None,
+    )

@@ -1,6 +1,25 @@
-# LfSrcHarness
+# 凛枫SRC Harness
 
-LfSrcHarness 是面向授权安全工作的桌面与服务端自动化平台，集中管理范围、策略审批、执行、审计事件、证据、报告和急停。它提供 CLI、API、Python 和 gRPC 接口。
+凛枫SRC Agent 面向合法、明确授权的 SRC 漏洞研究，目标是把任务规划、AI 模型调用、工具执行、证据整理和报告生成纳入可审计的流程。凛枫SRC Harness 为它提供授权范围、策略审批、运行调度、事件记录和急停等基础能力，也可通过 CLI、API、Python 和 gRPC 接入其他 Agent。本公开仓库**只发布 Harness 自有源码，不包含原 Agent 本体**。
+
+## 下载与安装（v0.1.1-preview.3）
+
+- **Windows 64 位：**[直接下载桌面安装包（EXE）](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-Windows-Setup-v0.1.1-preview.3.exe)。运行安装向导，选择目录后会创建桌面快捷方式。[桌面使用说明](docs/DESKTOP_GUIDE.md)
+- **Kali / Ubuntu / Debian：**[下载源码安装包（tar.gz）](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-0.1.1-preview.3-source.tar.gz)，或按下面的命令从 GitHub 拉取安装。当前没有单独的 DEB/RPM 安装器。[详细安装说明](docs/INSTALL.md)
+- **文件校验：**[下载 SHA-256 校验文件](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/SHA256SUMS-0.1.1-preview.3.txt)；全部附件见 [v0.1.1-preview.3 发布页](https://github.com/ZC-kf/LfSrcHarness/releases/tag/v0.1.1-preview.3)。
+
+Linux 首次安装命令（把安装目录改成你需要的位置）：
+
+```bash
+git clone --branch v0.1.1-preview.3 --depth 1 "https://github.com/ZC-kf/LfSrcHarness.git"
+cd "LfSrcHarness"
+bash "./deploy/install.sh" --check
+bash "./deploy/install.sh" --root "$HOME/LfSrcHarness"
+```
+
+预检缺少 Python 3.12 或 Node.js/npm 时，脚本会说明缺项；详细的环境补齐方式见[安装指南](docs/INSTALL.md)。
+
+## 当前预览版
 
 Development targets Python 3.12. Deployment artifacts support Docker Compose, Kali/Ubuntu Ansible, Vagrant, systemd and Kubernetes.
 
@@ -15,12 +34,7 @@ Linux/Kali 安装脚本提供环境预检和可选的 apt 依赖补齐。详见
 安装的工具或 Agent；当前安装程序不会自动安装这些可选工具。来源与许可说明见
 [`docs/THIRD_PARTY.md`](docs/THIRD_PARTY.md)。
 
-Windows 用户从本仓库的 [Releases](https://github.com/ZC-kf/LfSrcHarness/releases)
-下载 `LfSrcHarness-Windows-Setup-preview.exe`，选择安装目录后即可创建桌面快捷方式。
-安装程序按需从微软官方下载并验证 .NET Framework / WebView2 组件；Python 和界面
-已包含在桌面安装包中。Linux/Kali 用户从仓库获取源码，按
-[`docs/INSTALL.md`](docs/INSTALL.md) 执行命令行安装。
-桌面操作请看中文的 [`docs/DESKTOP_GUIDE.md`](docs/DESKTOP_GUIDE.md)。
+Windows 安装程序按需从微软官方下载并验证 .NET Framework / WebView2 组件；Python 和界面已包含在桌面安装包中。桌面版尚未完成新建任务、审批处理与报告下载的完整操作流，现状见[桌面使用说明](docs/DESKTOP_GUIDE.md)。
 
 原创 Harness 代码按 [PolyForm Noncommercial 1.0.0](LICENSE.md) 提供非商业使用许可；
 这属于“源码可见”，不是 OSI 定义的开源许可。请只在合法、明确授权的范围内使用。

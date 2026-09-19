@@ -6,13 +6,14 @@
 ## 下载安装
 
 1. 在本仓库 [Releases](https://github.com/ZC-kf/LfSrcHarness/releases) 下载最新的
-   `LfSrcHarness-Windows-Setup-preview.exe` 和同一版本的 `SHA256SUMS` 文件。
+   `LfSrcHarness-Windows-Setup-v0.1.1-preview.3.exe` 和同一版本的 `SHA256SUMS` 文件。
 2. 对照校验文件中的 SHA-256 值核对安装包。此预览版尚未进行项目代码签名；
    如果下载来源、文件摘要或系统安全提示与预期不符，请先停止安装。
 3. 运行安装向导，选择你自己的安装文件夹。安装程序会检查 64 位 Windows、
    .NET Framework 和 WebView2；缺少后两者时，会联网从微软官方下载并验证
    签名，完成后复查。若微软安装程序要求重启，重启后重新运行本安装包。
-4. 安装完成后，从桌面或开始菜单的 `LfSrcHarness` 快捷方式启动。
+4. 安装程序会先对已复制的程序运行自检；通过后，从桌面或开始菜单的
+   `LfSrcHarness` 快捷方式启动。程序与安装器使用同一套蓝色剑形三角图标。
 
 安装包不包含离线大模型权重、原 Hacker Agent 本机副本或第三方扫描工具。可选工具
 请按 [第三方来源清单](THIRD_PARTY.md) 从官方获取并自行遵守其许可。
@@ -64,6 +65,9 @@ Anthropic、Gemini 和 Ollama 也有独立类型。请使用服务提供方公�
   修复 Docker。不要为了解决桌面启动问题开启特权容器。
 - 更新预览版前请备份用户数据。遇到缺失组件或安装中断，可按
   [安装指南](INSTALL.md) 的说明从官方渠道补齐后重新运行安装包。
+- 如果旧版启动时报 `Unable to configure formatter 'default'`，请下载
+  `v0.1.1-preview.3` 或更新版本，在原目录重新安装。旧版窗口程序的无控制台
+  日志初始化问题已在此版本修复；更新不会主动删除个人设置。
 
 本项目原创源码采用 [PolyForm Noncommercial 1.0.0](../LICENSE.md)，不授权商业
 用途。一般 Bug 和改进建议可在 GitHub Issue 反馈；敏感安全问题请按

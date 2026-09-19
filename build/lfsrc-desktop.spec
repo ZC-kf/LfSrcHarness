@@ -33,6 +33,7 @@ exe = EXE(
     pyz, analysis.scripts, [], exclude_binaries=True,
     name="LfSrcHarness", debug=False, bootloader_ignore_signals=False,
     strip=False, upx=False, console=False,
+    icon=str(root / "assets" / "LfSrcHarness-icon.ico"),
 )
 coll = COLLECT(
     exe, analysis.binaries, analysis.datas,

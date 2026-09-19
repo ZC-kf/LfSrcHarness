@@ -1,7 +1,7 @@
 # PROJECT_PLAN — LfSrcHarness
 
 - Status: V1_ACCEPTED_V2_PUBLIC_PREVIEW_PUBLISHED
-- `PLAN_VERSION: 5` (v1 requirements and acceptance remain historical)
+- `PLAN_VERSION: 7` (v1 requirements and acceptance remain historical)
 - Scheme: D
 - Owner: Codex
 - Target: a runnable, scope-controlled, auditable security automation harness bundled with the existing Hacker Agent.
@@ -72,3 +72,40 @@ the original Agent repository and its `main` branch are out of write scope.
 The user approved source-only publication: third-party runtimes/tools are obtained from
 their official publishers or operating-system repositories; none of the local
 `agent_bundle/` content is redistributed in this repository.
+
+## Version 3 repository presentation and installer discovery
+
+| REQ | Work package | Acceptance criteria | Verification |
+|---|---|---|---|
+| REQ-022 | WP-022 repository About and download entry | GitHub About uses the user-selected name “凛枫SRC Harness” with an accurate Agent/Harness introduction and links to the current Release; the first screen of README links directly to the Windows installer, source archive, checksum file, and Linux/Kali/Ubuntu/Debian install commands, while stating that no DEB/RPM installer exists | V-022 local Markdown/link checks, public GitHub About/README inspection, Release asset links |
+
+`PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 6`;
+`AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`;
+`REASONING_DEPTH: ADAPTIVE`; `WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
+`READ_ONLY_REVIEWER: NONE`. WP-022 is limited to repository presentation,
+installation documentation, project records, and GitHub About metadata. It does
+not alter the installer binary, Agent bundle, product runtime, or user-provided icon.
+
+## Version 4 Windows repair and icon integration
+
+The user's newer request supersedes WP-022's no-installer/no-icon limit. Interpret
+“missing files” as both the required application payload and documented Windows
+prerequisites (.NET Framework and WebView2); do not fetch arbitrary application
+files or third-party tools from unverified sources. Keep the original user image
+unchanged and derive an installable icon asset from it. The user's latest visual
+direction requires the original sword/triangle, a centrally placed head-down
+figure with a black face mask, and the green-to-blue 0/1 code background.
+
+| REQ | Work package | Acceptance criteria | Verification |
+|---|---|---|---|
+| REQ-023 | WP-023 windowed startup repair | A frozen no-console Windows app starts without `sys.stdout`/`sys.stderr`; the existing `--self-test` catches startup configuration failures rather than only API resource failures | V-023 red/green regression, frozen EXE startup smoke |
+| REQ-024 | WP-024 installer prerequisite and payload checks | Windows setup detects and offers officially sourced .NET/WebView2 prerequisites before copying, verifies the bundled app payload after installation, and reports a failed check instead of launching a broken app | V-024 installer code/tests, compiled setup, disposable install and negative payload check |
+| REQ-025 | WP-025 user icon | The user's `zcarchhk.jpg` remains unchanged; a derived app icon is embedded in the frozen EXE, installer, desktop/Start shortcuts, and window where supported | V-025 asset inspection, EXE resource/icon check, installed shortcut check |
+| REQ-026 | WP-026 repaired public preview | A new tagged pre-release contains the repaired Windows installer, updated source/archive and checksums; README/ABOUT direct users to that release; old Release remains available but not the recommended download | V-026 CI, public asset hashes, clean download and launch |
+
+`PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 7`;
+`AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`; `REASONING_DEPTH: ADAPTIVE`;
+`WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
+`READ_ONLY_REVIEWER: NONE`. Write scopes are specified in the independent
+WP-023 through WP-026 change records. The original Agent and its repository
+remain out of scope.

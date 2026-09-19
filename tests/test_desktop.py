@@ -1,7 +1,11 @@
+import sys
 from pathlib import Path
+from types import SimpleNamespace
 
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+import lfsrc_harness.desktop as desktop
 from lfsrc_harness.desktop import create_desktop_runtime
 
 
@@ -49,3 +53,53 @@ def test_desktop_runtime_serves_ui_and_api_without_external_services(tmp_path: P
     assert TestClient(restarted.app).get("/api/targets", headers={
         "Authorization": f"Bearer {restarted.token}",
     }).json()["targets"] == ["other-node"]
+
+
+def test_windowed_entry_starts_without_console_streams(monkeypatch, tmp_path: Path) -> None:
+    app = FastAPI()
+    monkeypatch.setattr(desktop, "create_desktop_runtime", lambda: desktop.DesktopRuntime(
+        app=app, token="token", data_root=tmp_path,
+    ))
+    monkeypatch.setitem(sys.modules, "webview", SimpleNamespace(
+        create_window=lambda *args, **kwargs: None,
+        start=lambda **kwargs: None,
+    ))
+    monkeypatch.setattr(desktop.uvicorn, "Server", lambda config: SimpleNamespace(
+        run=lambda **kwargs: None, should_exit=False,
+    ))
+    monkeypatch.setattr(sys, "argv", ["LfSrcHarness.exe"])
+    with monkeypatch.context() as no_console:
+        no_console.setattr(sys, "stdout", None)
+        no_console.setattr(sys, "stderr", None)
+        desktop.main()
+
+
+def test_self_test_checks_server_configuration_without_console(monkeypatch, tmp_path: Path) -> None:
+    app = FastAPI()
+
+    @app.get("/health")
+    def health() -> dict[str, str]:
+        return {"status": "ok"}
+
+    @app.get("/")
+    def index() -> str:
+        return "desktop"
+
+    monkeypatch.setattr(desktop, "create_desktop_runtime", lambda: desktop.DesktopRuntime(
+        app=app, token="token", data_root=tmp_path,
+    ))
+    monkeypatch.setattr(sys, "argv", ["LfSrcHarness.exe", "--self-test"])
+    original_config = desktop.uvicorn.Config
+    configured = []
+
+    def record_config(*args, **kwargs):
+        config = original_config(*args, **kwargs)
+        configured.append(config)
+        return config
+
+    monkeypatch.setattr(desktop.uvicorn, "Config", record_config)
+    with monkeypatch.context() as no_console:
+        no_console.setattr(sys, "stdout", None)
+        no_console.setattr(sys, "stderr", None)
+        desktop.main()
+    assert len(configured) == 1

@@ -5,14 +5,16 @@
 
 ## Windows 桌面版
 
-从 [GitHub Releases](https://github.com/ZC-kf/LfSrcHarness/releases) 下载
-`LfSrcHarness-Windows-Setup-preview.exe`，在安装向导中选择目标文件夹。
+从 [v0.1.1-preview.3 发布页](https://github.com/ZC-kf/LfSrcHarness/releases/tag/v0.1.1-preview.3)
+[直接下载 Windows 安装包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-Windows-Setup-v0.1.1-preview.3.exe)，
+并用[同版校验文件](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/SHA256SUMS-0.1.1-preview.3.txt)
+核对 SHA-256 后运行，在安装向导中选择目标文件夹。
 安装程序会检查 64 位 Windows、.NET Framework 4.6.2 以上和 Microsoft Edge
 WebView2 Runtime。缺少 .NET 或 WebView2 时，安装程序会从微软官方下载对应
 引导程序，验证其微软数字签名后运行；复查成功才继续复制文件。若微软安装程序
 要求重启，重启后重新运行本安装包即可继续。网络不可用时可先按微软官方说明
 手动安装组件。
-安装完成后，桌面和开始菜单会有快捷方式。
+安装完成后会运行一次本机自检，确认程序和界面文件可加载；若自检失败，安装器会提示重新运行安装包修复。桌面和开始菜单会有快捷方式。
 
 桌面版已包含 Python 运行环境与编译后的界面，不需要用户安装 Python、Node.js、
 Docker，也不附带本地大模型权重。首次打开后，可在“模型设置”里填入服务商、
@@ -24,7 +26,15 @@ Docker，也不附带本地大模型权重。首次打开后，可在“模型�
 
 ## Kali、Ubuntu、Debian 命令行版
 
-从本仓库的 Releases 下载源码包并解压，或使用 Git 克隆本仓库；进入源码目录执行：
+从发布页[下载源码包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-0.1.1-preview.3-source.tar.gz)
+并解压，或使用 Git 拉取同一预览版：
+
+```bash
+git clone --branch v0.1.1-preview.3 --depth 1 "https://github.com/ZC-kf/LfSrcHarness.git"
+cd "LfSrcHarness"
+```
+
+进入源码目录后执行：
 
 ```bash
 bash './deploy/install.sh' --check
@@ -42,6 +52,8 @@ bash './deploy/install.sh' --root "$HOME/LfSrcHarness"
 ```
 
 路径中有空格时必须保留引号。不要直接运行未经核验的网络安装脚本。
+目前没有单独的 DEB/RPM 安装器；Linux/Kali/Ubuntu/Debian 使用源码包内的
+`deploy/install.sh`，可根据需要替换 `--root` 安装目录。
 
 ## Docker 与其他部署
 

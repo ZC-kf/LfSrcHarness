@@ -3,6 +3,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
+from PIL import Image
 
 ROOT = Path(__file__).parents[1]
 
@@ -28,6 +29,31 @@ def test_windows_installer_fetches_prerequisites_from_microsoft() -> None:
     assert "DownloadTemporaryFile" in script
     assert "VerifyMicrosoftSignature" in script
     assert 'Source: "..\\..\\package\\prereqs\\' not in script
+
+
+def test_windows_installer_validates_embedded_payload_and_installed_app() -> None:
+    script = (ROOT / "deploy" / "windows" / "LfSrcHarness.iss").read_text(encoding="utf-8")
+
+    assert 'FileExists("..\\..\\package\\LfSrcHarness-Desktop-Preview\\LfSrcHarness.exe")' in script
+    assert (
+        'FileExists("..\\..\\package\\LfSrcHarness-Desktop-Preview\\_internal\\'
+        'web\\dist\\index.html")'
+        in script
+    )
+    assert "procedure CurStepChanged(CurStep: TSetupStep);" in script
+    assert "--self-test" in script
+    assert "RaiseException" in script
+
+
+def test_desktop_icon_is_embedded_in_exe_and_installer() -> None:
+    icon = ROOT / "assets" / "LfSrcHarness-icon.ico"
+    with Image.open(icon) as image:
+        assert image.size == (256, 256)
+        assert len(image.info["sizes"]) >= 5
+    spec = (ROOT / "build" / "lfsrc-desktop.spec").read_text(encoding="utf-8")
+    installer = (ROOT / "deploy" / "windows" / "LfSrcHarness.iss").read_text(encoding="utf-8")
+    assert 'icon=str(root / "assets" / "LfSrcHarness-icon.ico")' in spec
+    assert "SetupIconFile=..\\..\\assets\\LfSrcHarness-icon.ico" in installer
 
 
 @pytest.mark.skipif(os.name != "nt", reason="PowerShell source-copy test runs on Windows")

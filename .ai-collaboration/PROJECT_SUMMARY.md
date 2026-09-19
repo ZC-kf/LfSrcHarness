@@ -1,4 +1,4 @@
-# LfSrcHarness project summary through v0.1.1-preview.2
+# LfSrcHarness project summary through the v0.1.1-preview.3 local build
 
 - Date: 2026-09-19
 - Protocol: 5.1
@@ -68,3 +68,18 @@ PostgreSQL task persistence, live external model/vendor interoperability, licens
 servers, optional screen/desktop/browser backends on production nodes, and the privileged
 Compose profile require later environment-specific validation. Local tests use fixtures and
 loopback only. No production target was contacted during acceptance.
+
+## 0.1.1-preview.3 local repair
+
+WP-022 through WP-026 address repository discoverability and a Windows windowed-app
+startup failure. A red regression reproduced the reported Uvicorn formatter
+exception with absent console streams. The desktop entry now avoids Uvicorn's
+console formatter, and its self-test also exercises server configuration.
+Windows setup validates embedded program/UI files and executes installed
+`--self-test`; rerunning setup restored a deliberately removed UI file in a
+disposable installation. The user's original image remains unchanged; the
+embedded program/setup icon preserves the sword/triangle, central hooded
+masked figure, and green/blue binary field. Local pytest passed 108 tests
+with 2 Linux-only skips. Frozen self-test, normal startup, installer compile,
+install, repair and uninstall passed on Windows. Clean-OS .NET/WebView2
+bootstrapper behavior is unverified. Public GitHub CI/Release are pending.

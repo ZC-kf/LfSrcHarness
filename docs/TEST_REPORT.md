@@ -2,6 +2,21 @@
 
 Date: 2026-09-19
 
+## Windows repair preview.3 (2026-09-19)
+
+- Red/green regression reproduced the exact Uvicorn formatter failure with
+  `sys.stdout=None` and `sys.stderr=None`; the repaired startup and expanded
+  `--self-test` tests passed.
+- Local Python suite: 108 passed, 2 Linux-only tests skipped on Windows.
+- PyInstaller windowed EXE `--self-test` exited 0; normal launch remained alive
+  after five seconds. Inno Setup 7.1 compiled the 35.1 MB installer.
+- Disposable-folder install exited 0, both program/UI payload files existed,
+  installed EXE self-test exited 0, and normal installed app remained running.
+  Deleting the disposable UI entry point and rerunning setup restored it; both
+  disposable installations were uninstalled successfully.
+- EXE and setup files both expose an embedded icon. Missing-.NET/WebView2
+  download flows still require a clean Windows environment for live validation.
+
 ## Automated results
 
 - Python: 88 tests passed on CPython 3.12.13.
