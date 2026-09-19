@@ -20,10 +20,11 @@
   findings. Redacted scan of the local Agent bundle reported 3388 potential findings,
   mostly within copied third-party skill directories; at least one binary exceeds
   GitHub's single-file limit. No secret values were printed or uploaded.
-- Status / remaining: publication verification is in progress. Do not report the
-  repository or Release as live until remote and download checks pass. Missing-runtime
-  installation branches still require a clean Windows VM test; no live public targets
-  were contacted by product tests.
+- Status / remaining: source-only repository and `v0.1.1-preview.2` pre-release
+  are public. The release points to commit `43bc38a`; its source archive and
+  checksum were downloaded/verified. Missing-runtime installation branches
+  still require a clean Windows VM test; no live public targets were contacted
+  by product tests.
 
 ## Post-publication CI correction
 
@@ -37,5 +38,8 @@
   The Linux checkout directory is not writable by that container user.
 - Fix: use a Compose-managed `runs-data` volume by default, preserving non-root
   execution. A regression test checks all runtime services use the named volume.
-- Verification: focused deployment tests and Compose config pass locally;
-  post-fix GitHub container smoke and Release verification remain pending.
+- Verification: focused deployment tests and Compose config pass locally.
+  GitHub Actions [run #3](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35433723873)
+  and documentation [run #4](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35433939393)
+  passed all jobs, including container smoke. The updated source archive is in
+  `v0.1.1-preview.2`, and its public download matched the local SHA-256 digest.

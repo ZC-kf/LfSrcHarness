@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.1-preview.2 - 2026-09-19
+
+- Published a Chinese Windows desktop usage guide with install, model, scope,
+  troubleshooting, and preview-limit instructions.
+- Fixed the default Docker Compose runtime volume for non-root services.
+- Reissued the source archive and checksums; the Windows installer binary is
+  unchanged from `0.1.1-preview`.
+
 ## 0.1.0 - 2026-09-19
 
 - Added authorization scope validation, action tiers, approval gates, and emergency stops.

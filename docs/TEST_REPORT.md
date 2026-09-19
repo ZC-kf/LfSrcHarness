@@ -53,7 +53,9 @@ production desktop/browser automation were not exercised by the local smoke suit
 - GitHub Actions run [#3](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35433723873)
   for commit `322434f` completed successfully, including container smoke after
   changing the Compose runtime-data mount to a managed volume.
-- Chinese desktop guide link and content checks: 2 passed locally. The guide's
-  publication check is pending the documentation commit.
-- The existing preview Release was built before the Compose fix; a follow-up
-  Release is needed so the source archive includes the corrected deployment.
+- Chinese desktop guide link and content checks: 2 passed locally. GitHub
+  rendered the guide at `main` and in tag `v0.1.1-preview.2`.
+- GitHub Actions [run #4](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35433939393)
+  passed all jobs for the guide commit. The follow-up pre-release contains the
+  corrected source archive; its public download matched SHA-256. The unchanged
+  Windows installer asset also matched the local digest displayed by GitHub.

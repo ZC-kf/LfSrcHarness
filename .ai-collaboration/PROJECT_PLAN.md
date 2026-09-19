@@ -1,6 +1,6 @@
 # PROJECT_PLAN — LfSrcHarness
 
-- Status: V1_ACCEPTED_V2_PUBLICATION_IN_PROGRESS
+- Status: V1_ACCEPTED_V2_PUBLIC_PREVIEW_PUBLISHED
 - `PLAN_VERSION: 5` (v1 requirements and acceptance remain historical)
 - Scheme: D
 - Owner: Codex
