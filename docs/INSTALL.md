@@ -5,9 +5,9 @@
 
 ## Windows 桌面版
 
-从 [v0.1.1-preview.3 发布页](https://github.com/ZC-kf/LfSrcHarness/releases/tag/v0.1.1-preview.3)
-[直接下载 Windows 安装包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-Windows-Setup-v0.1.1-preview.3.exe)，
-并用[同版校验文件](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/SHA256SUMS-0.1.1-preview.3.txt)
+从 [v0.1.1-preview.4 公开测试发布页](https://github.com/ZC-kf/LfSrcHarness/releases/tag/v0.1.1-preview.4)
+[直接下载 Windows 安装包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.4/LfSrcHarness-Windows-Setup-v0.1.1-preview.4.exe)，
+并用[同版校验文件](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.4/SHA256SUMS-0.1.1-preview.4.txt)
 核对 SHA-256 后运行，在安装向导中选择目标文件夹。
 安装程序会检查 64 位 Windows、.NET Framework 4.6.2 以上和 Microsoft Edge
 WebView2 Runtime。缺少 .NET 或 WebView2 时，安装程序会从微软官方下载对应
@@ -26,11 +26,11 @@ Docker，也不附带本地大模型权重。首次打开后，可在“模型�
 
 ## Kali、Ubuntu、Debian 命令行版
 
-从发布页[下载源码包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.3/LfSrcHarness-0.1.1-preview.3-source.tar.gz)
+从发布页[下载源码包](https://github.com/ZC-kf/LfSrcHarness/releases/download/v0.1.1-preview.4/LfSrcHarness-0.1.1-preview.4-source.tar.gz)
 并解压，或使用 Git 拉取同一预览版：
 
 ```bash
-git clone --branch v0.1.1-preview.3 --depth 1 "https://github.com/ZC-kf/LfSrcHarness.git"
+git clone --branch v0.1.1-preview.4 --depth 1 "https://github.com/ZC-kf/LfSrcHarness.git"
 cd "LfSrcHarness"
 ```
 
@@ -63,6 +63,11 @@ Docker 是服务端部署方式，不是 Windows 桌面版的前提。高权限�
 提交至公开仓库。Compose 默认把运行数据保存在 Docker 管理的 `runs-data` 卷中，
 不会直接写入源码目录的 `runs/`；删除该卷会永久删除其中数据，操作前请先备份。
 
-可选扫描工具不包含在源码或安装包中，也不会静默下载安装。请按
-[`THIRD_PARTY.md`](THIRD_PARTY.md) 中的官方来源自行安装并核对许可，然后在软件
-中配置对应插件。
+公开测试版 `v0.1.1-preview.4` Windows 安装器会在应用自检后检查 Nmap 和 Metasploit
+Framework：已有安装会复用；缺失时询问用户，然后将官方安装程序下载到所选目录的
+`tools/downloads`，校验发布者签名并启动官方安装向导。需要管理员权限或系统目录时
+遵循官方安装器及 Windows 的提示，不强制放入 Harness 目录。安装失败时查看
+`logs/official-components.log`，补齐后可重新运行安装器。缺失组件的干净 Windows
+安装仍待实测；原 Agent 的公开分发审核也未完成，因此这是公开测试包，不是完整
+套件。第三方许可和官方来源见
+[`THIRD_PARTY.md`](THIRD_PARTY.md)。

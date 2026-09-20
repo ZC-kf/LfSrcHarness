@@ -24,6 +24,7 @@ web/dist/
 *.sqlite3
 .worktrees/
 build/pyinstaller-desktop/
+build/pyinstaller-work/
 build/pyinstaller/
 build/tool-downloads/
 build/tools/

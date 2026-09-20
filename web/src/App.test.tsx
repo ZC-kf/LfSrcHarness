@@ -106,4 +106,70 @@ describe("LfSrcHarness console", () => {
     );
   });
 
+  it("lets an administrator decide a pending approval", async () => {
+    let status = "pending";
+    const fetchMock = vi.fn(async (path: string, init?: RequestInit) => ({
+      ok: true, status: 200,
+      json: async () => path === "/api/tasks" ? []
+        : path === "/api/approvals" ? [{ id: "approval-1", status }]
+          : path === "/api/approvals/approval-1/approve" && init?.method === "POST"
+            ? { id: "approval-1", status: (status = "approved") } : [],
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "审批" }));
+    fireEvent.click(await screen.findByRole("button", { name: "批准" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(
+      "/api/approvals/approval-1/approve", expect.objectContaining({ method: "POST" }),
+    ));
+    expect(await screen.findByText("approved")).toBeInTheDocument();
+  });
+
+  it("lists generated report files for a selected run", async () => {
+    const fetchMock = vi.fn(async (path: string) => ({
+      ok: true, status: 200,
+      json: async () => path === "/api/tasks" ? [{
+        id: "run-1", status: "succeeded", active_plugin: "fixture", attempts: 1,
+        spec: { target: "local-node", objective: "本地测试", priority: 1, node: "local" },
+        updated_at: "2026-09-20T00:00:00Z",
+      }] : path === "/api/approvals" ? []
+        : path === "/api/reports/run-1" ? { run_id: "run-1", files: ["run-1.md"] } : [],
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "报告" }));
+
+    expect(await screen.findByText("run-1.md")).toBeInTheDocument();
+    expect(fetchMock).toHaveBeenCalledWith("/api/reports/run-1", expect.any(Object));
+  });
+
+  it("submits an in-scope desktop diagnostic task from the task page", async () => {
+    let submitted = false;
+    const fetchMock = vi.fn(async (path: string, init?: RequestInit) => ({
+      ok: true, status: path === "/api/tasks" && init?.method === "POST" ? 201 : 200,
+      json: async () => path === "/api/plugins" ? [{ name: "desktop-diagnostics", description: "本地诊断" }]
+        : path === "/api/targets" ? { targets: ["local-node"], scope: "local", rate_limit: {} }
+          : path === "/api/tasks" && init?.method === "POST" ? (submitted = true, { id: "task-1" })
+            : path === "/api/tasks" && submitted ? [{
+              id: "task-1", status: "queued", active_plugin: "desktop-diagnostics", attempts: 0,
+              spec: { target: "local-node", objective: "check setup", priority: 1, node: "local" },
+              updated_at: "2026-09-20T00:00:00Z",
+            }] : [],
+    }));
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+    fireEvent.click(screen.getByRole("button", { name: "任务" }));
+    await screen.findByRole("option", { name: "desktop-diagnostics" });
+    fireEvent.change(screen.getByLabelText("任务目标"), { target: { value: "check setup" } });
+    fireEvent.click(screen.getByRole("button", { name: "提交任务" }));
+
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledWith(
+      "/api/tasks", expect.objectContaining({ method: "POST", body: JSON.stringify({
+        target: "local-node", objective: "check setup", plugin: "desktop-diagnostics",
+      }) }),
+    ));
+    expect(await screen.findByText("check setup")).toBeInTheDocument();
+  });
+
 });

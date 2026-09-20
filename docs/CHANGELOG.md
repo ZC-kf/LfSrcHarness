@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.1.1-preview.4 - 2026-09-20 (public beta)
+
+- Added a desktop-local task worker and an in-app task form. The built-in
+  diagnostics plugin now completes a scope-checked, audited task without
+  Redis or Docker; unknown plugins are rejected before queueing.
+- Added an unchanged copy of the user-supplied starfield as the desktop
+  background, purple/blue translucent interface styling, and the existing
+  sword/triangle icon in the console header.
+- Added desktop approval actions and authenticated report listing/download.
+- Added a Windows official-component preflight; its missing-component path
+  still needs clean-machine acceptance and is marked experimental in this beta.
+
 ## 0.1.1-preview.3 - 2026-09-19
 
 - Fixed the frozen Windows desktop startup failure when no console streams exist

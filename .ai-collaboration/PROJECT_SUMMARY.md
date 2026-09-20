@@ -1,5 +1,49 @@
 # LfSrcHarness project summary through the v0.1.1-preview.3 local build
 
+## 2026-09-20 unpublished supplied-image theme
+
+WP-030 copied the user's starfield PNG byte-for-byte into the desktop web
+assets and rethemed the existing console in purple/blue translucent chrome.
+The original sword/triangle icon remains the EXE/setup icon and now also
+appears in the console brand. Source and isolated PyInstaller-bundle image
+hashes match; the rebuilt frozen EXE self-test passed. Live Playwright
+screenshots at desktop, image-native and mobile dimensions were inspected;
+assets loaded and the report download interaction still worked. This visual
+work remains local and does not change the published preview.3 Release.
+
+## 2026-09-20 unpublished desktop UI continuation
+
+WP-031 now runs an in-scope built-in desktop diagnostic task locally, without
+Redis/Docker. The task form lists available plugins and scope targets; the API
+rejects unknown plugins. The background worker persists terminal state and
+JSONL events, marks legacy invalid tasks failed, and continues. Scope changes
+remain effective for the running worker. Local regression: 116 Python tests
+passed, 2 Linux-only skipped; 8 frontend tests, Ruff, strict mypy, Vite build,
+frozen desktop self-test and Inno compile passed. Public beta preview.4 is a
+distribution target, not evidence that the full Agent or missing-component
+install paths are complete.
+
+WP-018 now has report listing/download and pending-approval actions in the
+desktop console. The report API reads the workflow's actual run-local output,
+requires bearer authentication, and rejects invalid or escaping file paths.
+Local regression, type/static checks and a Playwright loopback report download
+passed, including a narrow mobile viewport. This work is still unpublished;
+it does not provide a desktop task executor or complete Agent distribution.
+The public Release remains preview.3, and the partial WP-027/028/029 gates
+remain open. No complete version was claimed or uploaded.
+
+## 2026-09-20 partial preview.4 installer extension
+
+The user clarified that existing system tools should be reused, while absent
+publisher components should be fetched during installation. WP-027 adds a
+Windows check/install script and connects it to the Inno setup after the
+desktop self-test. The selected folder holds downloaded vendor installers;
+vendor setup may use system locations and UAC. Local check-mode tests and the
+Inno compile passed, but the missing-component path has not been tested on a
+clean Windows VM. The public GitHub release remains preview.3. Linux support
+and audited first-party Agent distribution remain open under WP-028/029; the
+local preview.4 installer is not a complete Agent bundle.
+
 - Date: 2026-09-19
 - Protocol: 5.1
 - `COLLABORATION_SCHEME: D` (Codex sole code writer and final verifier)

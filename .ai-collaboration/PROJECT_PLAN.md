@@ -1,7 +1,7 @@
 # PROJECT_PLAN — LfSrcHarness
 
-- Status: V1_ACCEPTED_V2_PUBLIC_PREVIEW_PUBLISHED
-- `PLAN_VERSION: 7` (v1 requirements and acceptance remain historical)
+- Status: V1_ACCEPTED_V2_PUBLIC_BETA_PREVIEW4_CANDIDATE
+- `PLAN_VERSION: 9` (v1 requirements and acceptance remain historical)
 - Scheme: D
 - Owner: Codex
 - Target: a runnable, scope-controlled, auditable security automation harness bundled with the existing Hacker Agent.
@@ -109,3 +109,67 @@ figure with a black face mask, and the green-to-blue 0/1 code background.
 `READ_ONLY_REVIEWER: NONE`. Write scopes are specified in the independent
 WP-023 through WP-026 change records. The original Agent and its repository
 remain out of scope.
+
+## Version 5 install-time official components
+
+The user clarified that a selected install folder is preferred, not mandatory: an existing
+system installation must be reused, and a vendor installer may require another location
+or administrator approval. This supersedes the earlier assumption that every optional
+tool must be installed manually after setup. It does not authorize uploading the local
+Agent bundle, its private data, or third-party binaries to GitHub.
+
+| REQ | Work package | Acceptance criteria | Verification |
+|---|---|---|---|
+| REQ-027 | WP-027 Windows official-component preflight | Setup detects existing Nmap and Metasploit Framework installations; absent components are fetched from publisher-controlled URLs into the selected installation's tools/downloads, verified before execution, installed through vendor UI/UAC, then rechecked; failures identify the component and preserve a local log | V-027 PowerShell check-mode tests, Inno compile, separate clean-VM missing-component test before release |
+| REQ-028 | WP-028 Linux component provisioning | Kali/Ubuntu/Debian installer reuses existing tools, installs absent supported components from trusted OS/vendor repositories, rechecks and diagnoses unsupported cases | V-028 shell/integration tests on supported distributions |
+| REQ-029 | WP-029 audited Agent distribution | Public release contains the publishable first-party Agent required for a complete install, but no private state, secrets, oversized third-party binaries or unreviewed third-party materials | V-029 allowlist and secret/license audit, clean clone, fresh-machine end-to-end acceptance |
+
+`PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 8`;
+`AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`; `REASONING_DEPTH: ADAPTIVE`;
+`WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
+`READ_ONLY_REVIEWER: NONE`. WP-027 is currently the only implementation in progress.
+WP-028 and WP-029 are explicitly not accepted. A local Windows setup compile alone is
+not evidence of a complete, clean-machine installation or a complete Agent bundle.
+
+## WP-018 continuation — report and approval UI (local, unpublished)
+
+This continues existing REQ-018 without changing the product requirements or plan
+version. Scope is the report read/download API, desktop report and approval views,
+their tests, and truthful documentation. AC: an authenticated operator can list
+and download an existing report; a pending approval exposes approve/reject actions
+in the desktop UI; no claim is made that queued tasks execute without a worker.
+V: API and React tests, full Python suite, static checks, production frontend
+build, and loopback Playwright interaction. Public release remains gated by
+WP-027 clean-machine validation, WP-028, WP-029, and complete desktop execution.
+
+## Version 6 supplied starfield theme
+
+The user supplied `art-20260814-233003-264-1bdae646.png` and requested it as
+the program background with a matching visual theme. The original file must
+remain unchanged. This extends the existing desktop design without changing
+the previous sword/triangle app icon.
+
+| REQ | Work package | Acceptance criteria | Verification |
+|---|---|---|---|
+| REQ-030 | WP-030 supplied background and theme | The original PNG is copied byte-for-byte into the web assets; the desktop UI uses it as the background, shifts its chrome to a readable purple/blue starfield palette, and shows the existing icon | V-030 asset SHA-256/dimensions, frontend tests/build, rendered desktop/native/mobile screenshots, live asset requests |
+
+`PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 9`;
+`AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`; `REASONING_DEPTH: ADAPTIVE`;
+`WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
+`READ_ONLY_REVIEWER: NONE`. WP-030 only changes web assets/theme, their tests,
+documentation and collaboration records. It does not authorize releasing the
+still-incomplete Agent bundle or bypassing the publication gates above.
+
+## WP-031 desktop task loop (existing REQ-009/018, unpublished)
+
+`PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 9`;
+`AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`; `REASONING_DEPTH: ADAPTIVE`;
+`WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
+`READ_ONLY_REVIEWER: NONE`; `DEPENDENCIES: WP-018, WP-030`.
+Write scope: desktop local worker, API plugin catalog/validation, desktop task form,
+focused tests, truthful guide/test records and this collaboration archive.
+AC-031: the installed desktop can submit an in-scope built-in local diagnostic
+task, execute it without Redis/Docker, persist terminal state, expose its JSONL
+events, and display status; unknown plugins are rejected before enqueueing.
+V-031: red/green desktop/API/React tests, full local suites and static checks,
+frozen desktop self-test. This is not an autonomous Agent or public release.

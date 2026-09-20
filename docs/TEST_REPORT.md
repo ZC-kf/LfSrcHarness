@@ -1,6 +1,54 @@
 # Test Report
 
-Date: 2026-09-19
+Date: 2026-09-20
+
+## Public beta preview.4 candidate — desktop local task loop (2026-09-20)
+
+- A regression first showed the desktop task was queued without a local worker.
+  The implementation now accepts an in-scope built-in diagnostic task from the
+  UI, processes it through policy/orchestration, persists a terminal status,
+  and exposes `run_start`, `tool_call`, `tool_result`, `run_end` JSONL events.
+  Unknown plugins are rejected; a pre-existing invalid queued task fails
+  visibly without blocking later tasks. A changed scope is enforced by the
+  running worker. The diagnostic plugin does not contact a target.
+- Local Windows suite: **116 Python tests passed, 2 Linux-only tests skipped**;
+  **8 frontend tests passed**. Ruff, strict mypy on 26 source files, and
+  TypeScript/Vite production build passed. The frozen desktop bundle rebuilt
+  from the current source and exited 0 on `--self-test`; its starfield asset
+  SHA-256 matched the source. Inno Setup 7.1 compiled the preview.4 installer.
+- This is a **public beta**, not a complete Agent acceptance. On this host the
+  official-component preflight reports Nmap and Metasploit absent. Installing
+  them from the new setup, a clean Windows missing-.NET/WebView2 scenario,
+  and a full Kali/Ubuntu installation have not been tested. The original Agent
+  is not in the public bundle. No external model or target was contacted.
+
+## Unpublished starfield desktop theme (2026-09-20)
+
+- The supplied 1672×941 PNG was copied byte-for-byte into `web/public`;
+  SHA-256 `6B23D3CB29F0ADD1739E632B215C6811B8697EF47B437A59A4F751B0CC430A6E`.
+- The purple/blue theme, original sword/triangle icon, desktop report workflow,
+  and responsive 1280×800, native 1672×941, and 390×844 screens were inspected
+  through the built app. Both visual assets returned HTTP 200; the report
+  download completed and browser console errors were empty.
+- A fresh PyInstaller bundle built in an isolated temporary folder. Its
+  `LfSrcHarness.exe --self-test` exited 0, and the bundled background matched
+  the source image's SHA-256. This is not an installer or clean-machine test.
+- Final local regression: 115 Python tests passed, 2 Linux-only tests skipped;
+  7 frontend tests passed; Ruff, strict mypy, Vite build and `git diff --check`
+  passed. Two upstream TestClient deprecation warnings remain.
+
+## Unpublished desktop report/approval continuation (2026-09-20)
+
+- Windows local suite: 113 Python tests passed, 2 Linux-only tests skipped;
+  7 React tests passed. Ruff, strict mypy and TypeScript/Vite build passed.
+- An authenticated live loopback API returned a generated five-format fixture
+  report; Playwright loaded the compiled UI at 1280×800 and 390×844,
+  displayed the report list and downloaded its HTML file. Browser console:
+  no errors. Approval action is covered by frontend and API tests, not by a
+  seeded live UI run.
+- This is not a complete-install acceptance test. No Agent bundle, actual
+  third-party installer missing-component path, Linux full install or external
+  model provider was validated here. The public Release remains preview.3.
 
 ## Windows repair preview.3 (2026-09-19)
 

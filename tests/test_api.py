@@ -108,6 +108,27 @@ def test_events_json_and_sse_endpoints_replay_ledger(tmp_path: Path) -> None:
     assert "data:" in stream.text
 
 
+def test_workflow_report_can_be_listed_and_downloaded_with_auth(tmp_path: Path) -> None:
+    api, _ = client(tmp_path)
+    report = tmp_path / "runs" / "run-1" / "reports" / "run-1.md"
+    report.parent.mkdir(parents=True)
+    report.write_text("# Example report\n", encoding="utf-8")
+
+    listing = api.get("/api/reports/run-1", headers=headers("viewer-token"))
+    download = api.get(
+        "/api/reports/run-1/files/run-1.md", headers=headers("viewer-token")
+    )
+
+    assert listing.status_code == 200
+    assert listing.json() == {"run_id": "run-1", "files": ["run-1.md"]}
+    assert download.status_code == 200
+    assert download.text.splitlines() == ["# Example report"]
+    assert api.get("/api/reports/run-1/files/run-1.md").status_code == 401
+    assert api.get(
+        "/api/reports/run-1/files/unknown.md", headers=headers("viewer-token")
+    ).status_code == 404
+
+
 def test_all_required_resource_routes_exist(tmp_path: Path) -> None:
     api, _ = client(tmp_path)
     paths = {route.path for route in api.app.routes}

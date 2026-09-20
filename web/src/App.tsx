@@ -1,7 +1,6 @@
 import {
   Activity,
   AlertOctagon,
-  Archive,
   Bot,
   Boxes,
   CheckCircle2,
@@ -20,7 +19,6 @@ import {
   ServerCog,
   Settings,
   ShieldCheck,
-  TerminalSquare,
   type LucideIcon,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -44,6 +42,7 @@ type TaskRecord = {
   status: "queued" | "running" | "pending_approval" | "succeeded" | "failed" | "stopped";
   active_plugin: string;
   attempts: number;
+  error?: string | null;
   spec: { target: string; objective: string; priority: number; node: string };
   updated_at: string;
 };
@@ -138,7 +137,7 @@ export default function App() {
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand-block">
-          <div className="brand-mark"><TerminalSquare size={22} /></div>
+          <div className="brand-mark"><img src="/lfsrc-icon.png" alt="凛枫SRC Harness 图标" /></div>
           <div><strong>LfSrcHarness</strong><span>OPERATOR CONSOLE</span></div>
         </div>
         <nav>
@@ -170,12 +169,12 @@ export default function App() {
         <section className="content">
           {error && <div className="notice">未能读取 API：{error}。配置 Token 后重试。</div>}
           {page === "dashboard" && <Dashboard tasks={tasks} summary={summary} refreshedAt={refreshedAt} />}
-          {page === "tasks" && <TaskTable tasks={tasks} title="任务队列" />}
+          {page === "tasks" && <TaskPanel tasks={tasks} onSubmitted={refresh} />}
           {page === "runs" && <TaskTable tasks={tasks.filter((task) => task.status !== "queued")} title="运行记录" />}
           {page === "events" && <EmptyPanel icon={Radio} title="实时事件流" text="选择运行后，通过 SSE 回放 JSONL 审计事件。" />}
           {page === "evidence" && <EmptyPanel icon={Fingerprint} title="证据仓库" text="内容寻址证据、哈希、来源与报告引用在这里统一检索。" />}
-          {page === "reports" && <EmptyPanel icon={Archive} title="报告中心" text="Markdown、JSON、HTML、PDF 与 SARIF 归档入口。" />}
-          {page === "approvals" && <ApprovalPanel approvals={approvals} />}
+          {page === "reports" && <ReportPanel tasks={tasks} />}
+          {page === "approvals" && <ApprovalPanel approvals={approvals} onChanged={refresh} />}
           {page === "providers" && <ProviderPanel />}
           {page === "nodes" && <NodePanel />}
           {page === "settings" && <SettingsPanel onSaved={() => void refresh()} />}
@@ -214,7 +213,7 @@ function TaskTable({ tasks, title }: { tasks: TaskRecord[]; title: string }) {
     <div className="panel-title"><div><FileSearch size={17} /><h2>{title}</h2></div><span>{tasks.length} items</span></div>
     <div className="table-wrap"><table><thead><tr><th>任务</th><th>目标</th><th>插件</th><th>尝试</th><th>状态</th></tr></thead>
       <tbody>{tasks.length ? tasks.map((task) => <tr key={task.id}>
-        <td><strong>{task.spec.objective}</strong><small>{task.id.slice(0, 18)}</small></td>
+        <td><strong>{task.spec.objective}</strong><small>{task.id.slice(0, 18)}</small>{task.error && <small className="task-error">{task.error}</small>}</td>
         <td>{task.spec.target}</td><td>{task.active_plugin}</td><td>{task.attempts}</td>
         <td><span className={`status-pill ${task.status}`}>{statusLabel[task.status]}</span></td>
       </tr>) : <tr><td className="empty-cell" colSpan={5}>暂无任务，等待 API 提交。</td></tr>}</tbody>
@@ -222,9 +221,125 @@ function TaskTable({ tasks, title }: { tasks: TaskRecord[]; title: string }) {
   </section>;
 }
 
-function ApprovalPanel({ approvals }: { approvals: Approval[] }) {
+function TaskPanel({ tasks, onSubmitted }: { tasks: TaskRecord[]; onSubmitted: () => Promise<void> }) {
+  const [targets, setTargets] = useState<string[]>([]);
+  const [plugins, setPlugins] = useState<Array<{ name: string; description: string }>>([]);
+  const [target, setTarget] = useState("");
+  const [plugin, setPlugin] = useState("");
+  const [objective, setObjective] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [feedback, setFeedback] = useState("");
+  useEffect(() => {
+    let active = true;
+    void Promise.all([
+      api<{ targets: string[] }>("/api/targets"),
+      api<Array<{ name: string; description: string }>>("/api/plugins"),
+    ]).then(([scope, available]) => {
+      if (!active) return;
+      setTargets(scope.targets);
+      setPlugins(available);
+      setTarget(scope.targets[0] || "");
+      setPlugin(available[0]?.name || "");
+    }).catch((reason) => { if (active) setFeedback(`无法加载任务选项：${String(reason)}`); });
+    return () => { active = false; };
+  }, []);
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!target || !plugin || !objective.trim()) return;
+    setBusy(true);
+    try {
+      await api<TaskRecord>("/api/tasks", {
+        method: "POST", body: JSON.stringify({ target, objective: objective.trim(), plugin }),
+      });
+      await onSubmitted();
+      setFeedback("任务已提交；本地执行状态会自动刷新。");
+      setObjective("");
+    } catch (reason) { setFeedback(`提交失败：${String(reason)}`); }
+    finally { setBusy(false); }
+  };
+
+  return <div className="task-page">
+    <section className="panel settings-panel task-composer">
+      <div className="panel-title"><div><ListChecks size={17} /><h2>新建任务</h2></div></div>
+      <form onSubmit={(event) => void submit(event)}>
+        <label>任务目标<input required value={objective} onChange={(event) => setObjective(event.target.value)} placeholder="例如：检查本地运行状态" /></label>
+        <label>授权目标<select required value={target} onChange={(event) => setTarget(event.target.value)}>
+          {targets.map((item) => <option key={item} value={item}>{item}</option>)}
+        </select></label>
+        <label>执行插件<select required value={plugin} onChange={(event) => setPlugin(event.target.value)}>
+          {plugins.map((item) => <option key={item.name} value={item.name}>{item.name}</option>)}
+        </select></label>
+        <button className="primary-button" type="submit" disabled={busy || !target || !plugin}>提交任务</button>
+      </form>
+      <p>当前内置插件只做本机诊断，不连接授权目标。其他 Agent 执行能力仍在集成中。</p>
+      {feedback && <p role="status">{feedback}</p>}
+    </section>
+    <TaskTable tasks={tasks} title="任务队列" />
+  </div>;
+}
+
+function ApprovalPanel({ approvals, onChanged }: { approvals: Approval[]; onChanged: () => Promise<void> }) {
+  const [busy, setBusy] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const decide = async (id: string, action: "approve" | "reject") => {
+    setBusy(id);
+    try {
+      await api<Approval>(`/api/approvals/${encodeURIComponent(id)}/${action}`, { method: "POST" });
+      await onChanged();
+      setFeedback(action === "approve" ? "已批准。" : "已拒绝。");
+    } catch (reason) { setFeedback(`审批失败：${String(reason)}`); }
+    finally { setBusy(""); }
+  };
   return <section className="panel wide-panel"><div className="panel-title"><div><ClipboardCheck size={17} /><h2>审批队列</h2></div></div>
-    {approvals.length ? approvals.map((approval) => <div className="approval-row" key={approval.id}><code>{approval.id}</code><span className={`status-pill ${approval.status}`}>{approval.status}</span></div>) : <div className="empty-state">当前没有待处理审批。</div>}
+    {approvals.length ? approvals.map((approval) => <div className="approval-row" key={approval.id}><code>{approval.id}</code><span className={`status-pill ${approval.status}`}>{approval.status}</span>
+      {approval.status === "pending" && <><button disabled={busy === approval.id} onClick={() => void decide(approval.id, "approve")}>批准</button><button disabled={busy === approval.id} onClick={() => void decide(approval.id, "reject")}>拒绝</button></>}
+    </div>) : <div className="empty-state">当前没有待处理审批。</div>}
+    {feedback && <p className="panel-feedback" role="status">{feedback}</p>}
+  </section>;
+}
+
+function ReportPanel({ tasks }: { tasks: TaskRecord[] }) {
+  const [selectedRun, setSelectedRun] = useState("");
+  const [files, setFiles] = useState<string[]>([]);
+  const [feedback, setFeedback] = useState("");
+  useEffect(() => {
+    if (!selectedRun && tasks.length) setSelectedRun(tasks[0].id);
+  }, [selectedRun, tasks]);
+  useEffect(() => {
+    if (!selectedRun) return;
+    let active = true;
+    void api<{ run_id: string; files: string[] }>(`/api/reports/${encodeURIComponent(selectedRun)}`)
+      .then((listing) => { if (active) { setFiles(listing.files); setFeedback(""); } })
+      .catch(() => { if (active) { setFiles([]); setFeedback("该运行尚无报告。"); } });
+    return () => { active = false; };
+  }, [selectedRun]);
+
+  const download = async (filename: string) => {
+    try {
+      const token = window.pywebview?.api
+        ? await window.pywebview.api.get_token()
+        : localStorage.getItem("lfsrc-token") || "";
+      const response = await fetch(`/api/reports/${encodeURIComponent(selectedRun)}/files/${encodeURIComponent(filename)}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+      const url = URL.createObjectURL(await response.blob());
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (reason) { setFeedback(`下载失败：${String(reason)}`); }
+  };
+
+  return <section className="panel wide-panel"><div className="panel-title"><div><ScrollText size={17} /><h2>报告中心</h2></div></div>
+    {tasks.length ? <><label className="report-select">选择运行<select value={selectedRun} onChange={(event) => setSelectedRun(event.target.value)}>
+      {tasks.map((task) => <option key={task.id} value={task.id}>{task.spec.objective} · {task.id}</option>)}
+    </select></label>
+      {files.map((filename) => <div className="approval-row" key={filename}><code>{filename}</code><button onClick={() => void download(filename)}>下载</button></div>)}
+      {feedback && <p className="panel-feedback" role="status">{feedback}</p>}</>
+      : <div className="empty-state">暂无运行记录，报告会在运行完成后出现在这里。</div>}
   </section>;
 }
 

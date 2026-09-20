@@ -1,6 +1,6 @@
 # Assumptions
 
-Date: 2026-09-19
+Date: 2026-09-20
 
 - All assessments are performed only against assets the operator is authorized to test.
 - The supplied Hacker Agent remains a local upstream bundle. Its adapted dashboard UI
@@ -26,3 +26,23 @@ Date: 2026-09-19
 - The original Harness code is intended for noncommercial lawful use; third-party components retain their own licenses. A public repository must not label the whole bundle Apache-2.0 or OSI open source.
 - Windows desktop installer checks 64-bit Windows, .NET Framework 4.6.2+ and WebView2. Missing components are downloaded from Microsoft and Authenticode-verified before execution; setup resumes only after successful rechecks. Python and the compiled UI are bundled.
 - Public GitHub distribution contains only original Harness source. Optional security tools are acquired separately by the operator from official publisher sites; their licenses and installation are not implied by plugin support.
+
+## Superseding installation assumption — 2026-09-20
+
+The previous line describing manual-only optional tool installation is superseded for
+the planned complete distribution. The Windows installer now treats Nmap and Metasploit
+Framework as install-time checked components: reuse an existing installation, or with
+operator consent fetch a publisher installer into the chosen Harness directory,
+verify its signature, run its normal installer (including Windows UAC if needed),
+then recheck. A vendor may require system-wide locations; functional installation
+takes precedence over forcing every byte under the Harness directory. The local
+preview.4 implementation still requires a clean-machine test; Linux provisioning and
+audited Agent publication are separate incomplete work packages.
+
+## User-supplied visual asset — 2026-09-20
+
+The user provided `art-20260814-233003-264-1bdae646.png` for the desktop
+background, then requested a public beta upload of the updated software.
+The asset is copied unchanged and is not a replacement for the existing
+sword/triangle app icon. We assume the user has the rights needed for this
+project distribution; any later third-party rights claim requires review.

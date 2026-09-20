@@ -1,6 +1,7 @@
 """FastAPI service with token authentication and role-based access control."""
 
 import json
+import re
 import secrets
 from collections.abc import Callable, Iterator
 from pathlib import Path
@@ -15,6 +16,7 @@ from pydantic import BaseModel, Field
 from .desktop_settings import DesktopSettingsStore, ProviderSettings, ProviderSettingsInput
 from .events import IntegrityError, replay_events
 from .orchestration import TaskPriority, TaskRepository, TaskSpec, TaskStatus
+from .plugins import PluginRegistry
 from .policy import ApprovalStore, EmergencyStopRegistry
 from .providers import ModelRequest
 from .scope import ScopeConfig, ScopeViolation
@@ -51,6 +53,7 @@ def create_app(
     stops: EmergencyStopRegistry | None = None,
     settings: DesktopSettingsStore | None = None,
     scope_save: Callable[[ScopeConfig], None] | None = None,
+    plugins: PluginRegistry | None = None,
 ) -> FastAPI:
     app = FastAPI(title="LfSrcHarness API", version="0.1.0")
     repository = TaskRepository(database)
@@ -169,6 +172,10 @@ def create_app(
     def list_tasks(_: Annotated[Principal, Depends(viewer)]) -> list[dict[str, object]]:
         return [record.model_dump(mode="json") for record in repository.list()]
 
+    @app.get("/api/plugins")
+    def list_plugins(_: Annotated[Principal, Depends(viewer)]) -> list[dict[str, object]]:
+        return [manifest.model_dump(mode="json") for manifest in plugins.list()] if plugins else []
+
     @app.post("/api/tasks", status_code=status.HTTP_201_CREATED)
     def create_task(
         payload: TaskCreate,
@@ -179,6 +186,11 @@ def create_app(
             scope.assert_target(payload.target)
         except ScopeViolation as exc:
             raise HTTPException(status_code=422, detail=str(exc)) from exc
+        if plugins is not None:
+            try:
+                plugins.get(payload.plugin)
+            except KeyError as exc:
+                raise HTTPException(status_code=422, detail="plugin is not installed") from exc
         record = repository.create(
             TaskSpec(
                 tenant_id=scope.tenant_id,
@@ -255,13 +267,33 @@ def create_app(
 
     @app.get("/api/reports/{run_id}")
     def get_reports(run_id: str, _: Annotated[Principal, Depends(viewer)]) -> dict[str, object]:
-        directory = report_directory / run_id
-        if not directory.is_dir():
-            raise HTTPException(status_code=404, detail="reports not found")
+        directory = _report_directory(run_id)
         return {
             "run_id": run_id,
             "files": sorted(path.name for path in directory.iterdir() if path.is_file()),
         }
+
+    @app.get("/api/reports/{run_id}/files/{filename}")
+    def download_report(
+        run_id: str, filename: str, _: Annotated[Principal, Depends(viewer)]
+    ) -> FileResponse:
+        directory = _report_directory(run_id)
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", filename):
+            raise HTTPException(status_code=404, detail="report not found")
+        path = directory / filename
+        if not path.is_file() or not path.resolve().is_relative_to(directory.resolve()):
+            raise HTTPException(status_code=404, detail="report not found")
+        return FileResponse(path, filename=filename)
+
+    def _report_directory(run_id: str) -> Path:
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]*", run_id):
+            raise HTTPException(status_code=404, detail="reports not found")
+        for directory in (run_directory / run_id / "reports", report_directory / run_id):
+            if directory.is_dir() and directory.resolve().is_relative_to(
+                directory.parent.resolve()
+            ):
+                return directory
+        raise HTTPException(status_code=404, detail="reports not found")
 
     @app.get("/api/approvals")
     def list_approvals(_: Annotated[Principal, Depends(viewer)]) -> list[dict[str, object]]:
