@@ -1,6 +1,6 @@
 # PROJECT_PLAN — LfSrcHarness
 
-- Status: V1_ACCEPTED_V2_PUBLIC_BETA_PREVIEW4_CANDIDATE
+- Status: V1_ACCEPTED_V2_PUBLIC_BETA_PREVIEW4_PUBLISHED_WITH_OPEN_GATES
 - `PLAN_VERSION: 9` (v1 requirements and acceptance remain historical)
 - Scheme: D
 - Owner: Codex
@@ -127,8 +127,9 @@ Agent bundle, its private data, or third-party binaries to GitHub.
 `PROTOCOL_VERSION: 5.1`; `COLLABORATION_SCHEME: D`; `PLAN_VERSION: 8`;
 `AI_OWNER: CODEX`; `MODEL_ID: CODEX_NATIVE`; `REASONING_DEPTH: ADAPTIVE`;
 `WORKTREE: H:\Hacker SRC\Hacker SRC Agent\LfSrcHarness`;
-`READ_ONLY_REVIEWER: NONE`. WP-027 is currently the only implementation in progress.
-WP-028 and WP-029 are explicitly not accepted. A local Windows setup compile alone is
+`READ_ONLY_REVIEWER: NONE`. WP-027 is included experimentally in the public beta,
+but its clean-machine installation gate remains open. WP-028 and WP-029 are explicitly
+not accepted. A local Windows setup compile alone is
 not evidence of a complete, clean-machine installation or a complete Agent bundle.
 
 ## WP-018 continuation — report and approval UI (local, unpublished)
@@ -172,4 +173,5 @@ AC-031: the installed desktop can submit an in-scope built-in local diagnostic
 task, execute it without Redis/Docker, persist terminal state, expose its JSONL
 events, and display status; unknown plugins are rejected before enqueueing.
 V-031: red/green desktop/API/React tests, full local suites and static checks,
-frozen desktop self-test. This is not an autonomous Agent or public release.
+frozen desktop self-test. WP-031 is accepted and published in public beta
+`v0.1.1-preview.4`. This is not an autonomous Agent or a complete-suite release.

@@ -18,6 +18,14 @@ Date: 2026-09-20
   SHA-256 matched the source. Inno Setup 7.1 compiled the preview.4 installer.
 - GitHub Actions [main run #35501931664](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35501931664)
   passed the web, Ubuntu Python, Windows Python, deployment and container-smoke jobs.
+- The [preview.4 release](https://github.com/ZC-kf/LfSrcHarness/releases/tag/v0.1.1-preview.4)
+  is public and marked pre-release. Main and tag runs
+  [#35502086575](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35502086575) and
+  [#35502164911](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35502164911)
+  passed. Four uploaded assets reported the same SHA-256 digests and lengths as
+  their local files through the GitHub API. A fresh unauthenticated installer
+  download was 39,041,311 bytes and matched the locally compiled SHA-256
+  `0D2A75438514CDBB5BB7462CA025E465AB17AF2D94E1145480242FD54BD93754`.
 - This is a **public beta**, not a complete Agent acceptance. On this host the
   official-component preflight reports Nmap and Metasploit absent. Installing
   them from the new setup, a clean Windows missing-.NET/WebView2 scenario,

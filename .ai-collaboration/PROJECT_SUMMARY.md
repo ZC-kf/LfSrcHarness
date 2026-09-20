@@ -13,6 +13,11 @@ work remains local and does not change the published preview.3 Release.
 
 ## 2026-09-20 unpublished desktop UI continuation
 
+Public beta `v0.1.1-preview.4` is now published in the independent repository.
+The four Release assets match local size and SHA-256; a fresh public installer
+download matched the locally built binary. GitHub Actions main and tag runs
+passed. The release is explicitly pre-release and not a full-Agent claim.
+
 WP-031 now runs an in-scope built-in desktop diagnostic task locally, without
 Redis/Docker. The task form lists available plugins and scope targets; the API
 rejects unknown plugins. The background worker persists terminal state and
