@@ -2,7 +2,7 @@
 
 Date: 2026-09-20
 
-## Public beta preview.4 candidate — desktop local task loop (2026-09-20)
+## Public beta preview.4 — desktop local task loop (2026-09-20)
 
 - A regression first showed the desktop task was queued without a local worker.
   The implementation now accepts an in-scope built-in diagnostic task from the
@@ -16,6 +16,8 @@ Date: 2026-09-20
   TypeScript/Vite production build passed. The frozen desktop bundle rebuilt
   from the current source and exited 0 on `--self-test`; its starfield asset
   SHA-256 matched the source. Inno Setup 7.1 compiled the preview.4 installer.
+- GitHub Actions [main run #35501931664](https://github.com/ZC-kf/LfSrcHarness/actions/runs/35501931664)
+  passed the web, Ubuntu Python, Windows Python, deployment and container-smoke jobs.
 - This is a **public beta**, not a complete Agent acceptance. On this host the
   official-component preflight reports Nmap and Metasploit absent. Installing
   them from the new setup, a clean Windows missing-.NET/WebView2 scenario,
